@@ -36,7 +36,7 @@ def convert(filename=None,imageformat=None):
                     image, os.path.abspath(image)))
                 markdownfile.close()
             if os.path.isdir(md_path):
-                os.system("pelican 0}".format(md_path))
+                os.system("pelican {0}".format(md_path))
 
     except (OSError, CalledProcessError, TypeError, UnboundLocalError) as e:
         print "-----{0}-----".format(e)
