@@ -25,7 +25,7 @@ def convert(filename=None,imageformat=None):
             convert_to_markdown(pdfname, img_path)
             convert_to_html(pdfname, img_path)
 
-    except (OSError, CalledProcessError, TypeError, UnboundLocalError) as e:
+    except (OSError, CalledProcessError, TypeError, UnboundLocalError, NameError) as e:
         print "-----{0}-----".format(e)
 
 
@@ -37,7 +37,7 @@ def convert_to_images(pdfname, jpg, img_path):
     files
 
     """
-    print "\nConverting pdf file to images .............."
+    print "\nConverting {0} file to images ..............".format(pdfname + '.pdf')
     if not os.path.isdir(img_path):
         os.mkdir(img_path)
     check_call(["convert", "-density", "150", "-trim",
@@ -83,9 +83,15 @@ def convert_to_html(pdfname, img_path):
 
 if __name__ == '__main__':
     try:
-        filename = sys.argv[1]
         if len(sys.argv) < 3:
-            convert(filename)
+            if isfile(sys.argv[1]):
+                filename = sys.argv[1]
+                convert(filename)
+            elif os.path.isdir(sys.argv[1]):
+                pdfs = os.listdir(sys.argv[1])
+                for pdf in pdfs:
+                    filename = os.path.join(sys.argv[1], pdf)
+                    convert(filename)
         else:
             imageformat = sys.argv[2]
             convert(filename, imageformat)
