@@ -16,13 +16,13 @@ def convert(filename=None,imageformat=None):
                 pdfname = splitext(filename)[0]
 
             if imageformat:
-                jpg = imageformat
+                jpg = pdfname + '_' + imageformat
             else:
                 jpg = pdfname + ".jpg"
 
             img_path = pdfname + '_images'
             convert_to_images(pdfname, jpg, img_path)
-            convert_to_markdown(pdfname, img_path)
+            convert_to_markdown(pdfname, img_path, jpg)
             convert_to_html(pdfname, img_path)
 
     except (OSError, CalledProcessError, TypeError, UnboundLocalError, NameError) as e:
@@ -44,7 +44,7 @@ def convert_to_images(pdfname, jpg, img_path):
                         filename, "-quality", "100", "-scene", "1", os.path.join(os.path.abspath(img_path), jpg)])
 
 
-def convert_to_markdown(pdfname, img_path):
+def convert_to_markdown(pdfname, img_path, jpg):
     """
 
     This function takes the pdf name and images path
@@ -56,12 +56,12 @@ def convert_to_markdown(pdfname, img_path):
     if not os.path.isdir(md_path):
         os.mkdir(md_path)
     print "\nConverting image files to markdown files ........."
-    for image in glob.iglob(img_path + '/' + pdfname + '-[0-9]*.jpg'):
+    for image in glob.glob(img_path + '/' + jpg.split('.')[0] + '-[0-9]*.jpg'):
         print "    Converted image '{0}' to markdown file.........".format(image)
         markdownfile = open(md_path + '/' + image.split(
             '.')[0].split('/')[-1] + '.md', 'wb')
         markdownfile.write('Date:{0} \nTitle: {1} \n'.format(
-            str(date.today()), image))
+            str(date.today()), image.split('/')[-1]))
         markdownfile.write('![Alt {0}]({1})'.format(
             image, os.path.abspath(image)))
         markdownfile.close()
@@ -81,6 +81,7 @@ def convert_to_html(pdfname, img_path):
         os.system("pelican {0}".format(md_path))
     print "\n ---- Conversion Completed ---- \n"
 
+
 if __name__ == '__main__':
     try:
         if len(sys.argv) < 3:
@@ -94,6 +95,13 @@ if __name__ == '__main__':
                     convert(filename)
         else:
             imageformat = sys.argv[2]
-            convert(filename, imageformat)
+            if isfile(sys.argv[1]):
+                filename = sys.argv[1]
+                convert(filename, imageformat)
+            elif os.path.isdir(sys.argv[1]):
+                pdfs = os.listdir(sys.argv[1])
+                for pdf in pdfs:
+                    filename = os.path.join(sys.argv[1], pdf)
+                    convert(filename, imageformat)
     except (IndexError) as e:
         print "----please provide input file----"
