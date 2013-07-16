@@ -37,7 +37,7 @@ def convert_to_images(pdfname, jpg, img_path):
     files
 
     """
-
+    print "\nConverting pdf file to images .............."
     if not os.path.isdir(img_path):
         os.mkdir(img_path)
     check_call(["convert", "-density", "150", "-trim",
@@ -55,7 +55,9 @@ def convert_to_markdown(pdfname, img_path):
     md_path = pdfname + '_md'
     if not os.path.isdir(md_path):
         os.mkdir(md_path)
+    print "\nConverting image files to markdown files ........."
     for image in glob.iglob(img_path + '/' + pdfname + '-[0-9]*.jpg'):
+        print "    Converted image '{0}' to markdown file.........".format(image)
         markdownfile = open(md_path + '/' + image.split(
             '.')[0].split('/')[-1] + '.md', 'wb')
         markdownfile.write('Date:{0} \nTitle: {1} \n'.format(
@@ -68,15 +70,16 @@ def convert_to_markdown(pdfname, img_path):
 def convert_to_html(pdfname, img_path):
     """
 
-    This function converts all the markdown files in to markdown
+    This function converts all the markdown files in to
     html files
 
     """
 
     md_path = pdfname + '_md'
+    print "\nConverting markdown files to html files .........\n"
     if os.path.isdir(md_path):
         os.system("pelican {0}".format(md_path))
-
+    print "\n ---- Conversion Completed ---- \n"
 
 if __name__ == '__main__':
     try:
