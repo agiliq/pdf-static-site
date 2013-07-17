@@ -5,6 +5,22 @@ from subprocess import check_call, CalledProcessError
 from os.path import isfile, splitext
 import glob
 from datetime import date
+import logging
+
+logging.basicConfig()
+# create logger
+logger = logging.getLogger('pdf-to-static')
+logger.setLevel(logging.DEBUG)
+
+# create file handler and set level to INFO
+file_handler = logging.FileHandler('pdf-to-static.log')
+file_handler.setLevel(logging.INFO)
+
+# create formatter
+format = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(format)
+logger.addHandler(file_handler)
 
 
 def convert(filename=None,imageformat=None):
@@ -26,18 +42,18 @@ def convert(filename=None,imageformat=None):
             convert_to_html(pdfname, img_path)
 
     except (OSError, CalledProcessError, TypeError, UnboundLocalError, NameError) as e:
-        print "-----{0}-----".format(e)
+        logger.error("-----{0}-----".format(e))
 
 
 def convert_to_images(pdfname, jpg, img_path):
     """
 
-    This function takes the pdf name and resultant image format
-    and converts all the pages in pdf in to a separate jpg image
-    files
+This function takes the pdf name and resultant image format
+and converts all the pages in pdf in to a separate jpg image
+files
 
-    """
-    print "\nConverting {0} file to images ..............".format(pdfname + '.pdf')
+"""
+    logger.info("Converting {0} file to images ..............".format(pdfname + '.pdf'))
     if not os.path.isdir(img_path):
         os.mkdir(img_path)
     check_call(["convert", "-density", "150", "-trim",
@@ -47,17 +63,17 @@ def convert_to_images(pdfname, jpg, img_path):
 def convert_to_markdown(pdfname, img_path, jpg):
     """
 
-    This function takes the pdf name and images path
-    and converts all the images in to markdown files
+This function takes the pdf name and images path
+and converts all the images in to markdown files
 
-    """
+"""
 
     md_path = pdfname + '_md'
     if not os.path.isdir(md_path):
         os.mkdir(md_path)
-    print "\nConverting image files to markdown files ........."
+    logger.info("Converting image files to markdown files .........")
     for image in glob.glob(img_path + '/' + jpg.split('.')[0] + '-[0-9]*.jpg'):
-        print "    Converted image '{0}' to markdown file.........".format(image)
+        logger.info(" Converted image '{0}' to markdown file.........".format(image))
         markdownfile = open(md_path + '/' + image.split(
             '.')[0].split('/')[-1] + '.md', 'wb')
         markdownfile.write('Date:{0} \nTitle: {1} \n'.format(
@@ -70,16 +86,16 @@ def convert_to_markdown(pdfname, img_path, jpg):
 def convert_to_html(pdfname, img_path):
     """
 
-    This function converts all the markdown files in to
-    html files
+This function converts all the markdown files in to
+html files
 
-    """
+"""
 
     md_path = pdfname + '_md'
-    print "\nConverting markdown files to html files .........\n"
+    logger.info("Converting markdown files to html files .........")
     if os.path.isdir(md_path):
         os.system("pelican {0}".format(md_path))
-    print "\n ---- Conversion Completed ---- \n"
+    logger.info("\n ---- Conversion Completed ---- \n")
 
 
 if __name__ == '__main__':
@@ -104,4 +120,4 @@ if __name__ == '__main__':
                     filename = os.path.join(sys.argv[1], pdf)
                     convert(filename, imageformat)
     except (IndexError) as e:
-        print "----please provide input file----"
+        logger.error("----please provide input file----")
