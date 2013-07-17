@@ -14,7 +14,7 @@ class TestCountImagesMarkdown(unittest.TestCase):
             os.system("pelican {0}".format(self.md_path))
         if os.path.isdir('output'):
             self.number_of_files = len(
-                [f for f in os.listdir('output') if 'jpg' in f])
+                [f for f in os.listdir('output') if 'linux-' in f])
 
     def test_images_equalto_markdownfiles(self):
         self.assertEqual(self.number_of_images, self.number_of_md_files)
