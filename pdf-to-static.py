@@ -53,7 +53,8 @@ and converts all the pages in pdf in to a separate jpg image
 files
 
 """
-    logger.info("Converting {0} file to images ..............".format(pdfname + '.pdf'))
+    logger.info("Converting {0} file to images ..............".format(
+        pdfname + '.pdf'))
     if not os.path.isdir(img_path):
         os.mkdir(img_path)
     check_call(["convert", "-density", "150", "-trim",
@@ -73,7 +74,8 @@ and converts all the images in to markdown files
         os.mkdir(md_path)
     logger.info("Converting image files to markdown files .........")
     for image in glob.glob(img_path + '/' + jpg.split('.')[0] + '-[0-9]*.jpg'):
-        logger.info(" Converted image '{0}' to markdown file.........".format(image))
+        logger.info(
+            " Converted image '{0}' to markdown file.........".format(image))
         markdownfile = open(md_path + '/' + image.split(
             '.')[0].split('/')[-1] + '.md', 'wb')
         markdownfile.write('Date:{0} \nTitle: {1} \n'.format(
@@ -120,4 +122,4 @@ if __name__ == '__main__':
                     filename = os.path.join(sys.argv[1], pdf)
                     convert(filename, imageformat)
     except (IndexError) as e:
-        logger.error("----please provide input file----")
+        print "\n----please provide input file----\n"
