@@ -23,8 +23,5 @@ Our main goal is to convert this set of pdfs as a single website. However this t
 
 ### Tools:
 
-Imagemagic can be used to convert the pdf to a set of images:
-
-http://stackoverflow.com/questions/6605006/convert-pdf-to-image-with-high-resolution
-
-These images can then be stiched together as an website. I suggest we use pelican static site generator to do this.
+* Imagemagic is used to convert the [pdf to a set of images](http://stackoverflow.com/questions/6605006/convert-pdf-to-image-with-high-resolution). 
+* Pelican is used to stich together the images as a static website. 
